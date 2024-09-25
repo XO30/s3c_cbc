@@ -1,0 +1,7 @@
+<launch>
+  <!-- Start your point cloud acquisition node here, if required -->
+
+  <node name="scan_distance_node" pkg="rslidar_sdk" type="scan_distance_node.py" output="screen">
+  </node>
+</launch>
+

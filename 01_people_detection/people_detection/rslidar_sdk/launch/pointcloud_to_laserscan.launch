@@ -1,0 +1,13 @@
+<launch>
+  <!-- Start your point cloud acquisition node here -->
+
+  <node name="pointcloud_to_laserscan" pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node">
+    <remap from="cloud_in" to="/rslidar_points"/> <!-- Replace "/your_point_cloud_topic" with the actual topic of your point cloud -->
+    <param name="target_frame" value="rslidar"/> <!-- Replace "base_link" with the target frame for the laser scan -->
+    <param name="range_min" value="0.5"/>    <!-- Modify the min_range parameter here -->
+    <param name="range_max" value="10.0"/>   <!-- Modify the max_range parameter here -->
+    <param name="min_height" value="0.0"/>   <!-- Modify the min_height parameter here -->
+    <param name="max_height" value="2.0"/>   <!-- Modify the max_height parameter here -->
+  </node>
+</launch>
+

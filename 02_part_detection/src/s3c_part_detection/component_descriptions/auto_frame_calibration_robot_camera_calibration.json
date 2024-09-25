@@ -1,0 +1,108 @@
+{
+  "name": "Robot Camera Calibration",
+  "description": {
+    "brief": "A node to perform the calibration between a camera and a robot."
+  },
+  "registration": "auto_frame_calibration::RobotCameraCalibration",
+  "inherits": "modulo_components::LifecycleComponent",
+  "parameters": [
+    {
+      "display_name": "Camera frame",
+      "description": "Name of the camera frame.",
+      "parameter_name": "camera_frame",
+      "parameter_type": "string",
+      "default_value": null
+    },
+    {
+      "display_name": "Marker frame",
+      "description": "Name of the marker frame.",
+      "parameter_name": "marker_frame",
+      "parameter_type": "string",
+      "default_value": null
+    },
+    {
+      "display_name": "Robot base frame",
+      "description": "Name of the robot base frame.",
+      "parameter_name": "robot_base_frame",
+      "parameter_type": "string",
+      "default_value": null
+    },
+    {
+      "display_name": "Robot end-effector frame",
+      "description": "Name of the robot end-effector frame.",
+      "parameter_name": "robot_ee_frame",
+      "parameter_type": "string",
+      "default_value": null
+    },
+    {
+      "display_name": "Number of recorded points",
+      "description": "Number of points to record during the acquisition step.",
+      "parameter_name": "number_of_recorded_points",
+      "parameter_type": "int",
+      "default_value": 100
+    },
+    {
+      "display_name": "Distance between points",
+      "description": "The minimal distance between points to consider acquiring them.",
+      "parameter_name": "distance_between_points",
+      "parameter_type": "double",
+      "default_value": 0.1
+    },
+    {
+      "display_name": "Epsilon time",
+      "description": "Delta time (nanoseconds) removed from current time during the acquisition process.",
+      "parameter_name": "epsilon_time",
+      "parameter_type": "int",
+      "default_value": 100000000
+    },
+    {
+      "display_name": "Calibration folder path",
+      "description": "Folder in which the calibration files are stored.",
+      "parameter_name": "calibration_folder_path",
+      "parameter_type": "string",
+      "default_value": "/tmp/calibration"
+    },
+    {
+      "display_name": "Calibration file",
+      "description": "Name of the calibration file, automatically expand it with the .yaml extension if not already there.",
+      "parameter_name": "calibration_file",
+      "parameter_type": "string",
+      "default_value": "camera_calibration.yaml"
+    },
+    {
+      "display_name": "Points dataset file",
+      "description": "Name of the dataset file, automatically expand it with the .yaml extension if not already there.",
+      "parameter_name": "points_dataset_file",
+      "parameter_type": "string",
+      "default_value": ""
+    },
+    {
+      "display_name": "Reset calibration",
+      "description": "If true, start again the calibration process even if the calibrations matrices are already set.",
+      "parameter_name": "reset_calibration",
+      "parameter_type": "bool",
+      "default_value": false
+    },
+    {
+      "display_name": "Reset dataset",
+      "description": "If true, start again the recording process even if the dataset of points is already there.",
+      "parameter_name": "reset_dataset",
+      "parameter_type": "bool",
+      "default_value": false
+    },
+    {
+      "display_name": "Is camera attached",
+      "description": "True if the camera is attached on the robot end-effector frame.",
+      "parameter_name": "is_camera_attached",
+      "parameter_type": "bool",
+      "default_value": false
+    }
+  ],
+  "predicates": [
+    {
+      "display_name": "Is calibrated",
+      "description": "Predicate to indicate if camera pose is calibrated",
+      "predicate_name": "is_calibrated"
+    }
+  ]
+}

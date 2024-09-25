@@ -1,0 +1,31 @@
+<launch>
+
+  <arg name="type" />
+
+  <node pkg="rslidar_sdk" name="rslidar_sdk_node" type="rslidar_sdk_node" output="screen">
+    <param name="config_path" value="" />
+  </node>
+
+  <node pkg="rviz" name="rviz" type="rviz" args="-d $(find rslidar_sdk)/rviz/rviz.rviz" />
+
+  <node name="pointcloud_to_laserscan" pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node">
+    <remap from="cloud_in" to="/rslidar_points"/> <!-- Replace "/your_point_cloud_topic" with the actual topic of your point cloud -->
+    <param name="target_frame" value="rslidar"/> <!-- Replace "base_link" with the target frame for the laser scan -->
+    <param name="range_min" value="0.1"/>    <!-- Modify the min_range parameter here -->
+    <param name="range_max" value="3.0"/>   <!-- Modify the max_range parameter here -->
+    <param name="min_height" value="0.0"/>   <!-- Modify the min_height parameter here -->
+    <param name="max_height" value="2.0"/>   <!-- Modify the max_height parameter here -->
+  </node>
+
+  <node name="people_detection_node" pkg="people_detection" type="people_detection.py"
+    output="screen">
+    <param name="file_path" value="$(find people_detection)/yolov7/standard.pt" />
+  </node>
+
+  <node name="scan_distance_node" pkg="rslidar_sdk" type="scan_distance_node_sa.py" output="screen"
+    if="$(eval arg('type') == 'smart_assembly')" />
+
+  <node name="scan_distance_node" pkg="rslidar_sdk" type="scan_distance_node_aa.py" output="screen"
+    if="$(eval arg('type') == 'automatic_assembly')" />
+
+</launch>

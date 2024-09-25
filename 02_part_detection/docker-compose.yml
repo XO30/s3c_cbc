@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  my_service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: s3c_cbc_part_detection-my_service:latest
+    environment:
+      - DISPLAY # ="${DISPLAY}"
+      - XAUTHORITY # ="${XAUTHORITY}"
+    volumes:
+      - ./src:/root/colcon_ws/src
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    privileged: true    
+    network_mode: host
+    ipc: host
+    # restart: always
+    command: /root/run.sh # tail -f /dev/null # 

@@ -1,0 +1,30 @@
+Home:
+
+x = 400
+y = -280
+z = 225
+
+
+new:
+x = 476.30
+y = -261.5
+z = -51.1
+
+
+delta:
+dx = 476.30 - 400 = 76.3
+dy = -261.50 - (-280) = 18.15
+dz = ?
+
+
+
+ros2 topic pub --once /urscript_interface/script_command std_msgs/msg/String '{data:
+"def my_prog():
+
+  movej(p[0.4, -0.28, 0.625, 0, 3.14, 0], a=1.2, v=0.25, r=0)
+
+  textmsg(\"motion finished\")
+
+end"}'
+
+

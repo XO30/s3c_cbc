@@ -1,0 +1,16 @@
+#syntax=ghcr.io/aica-technology/package-builder:v1.1.0-rc0001
+
+[metadata]
+version = "0.1.0"
+description = "Component package to S3C part detection"
+
+[build]
+type = "ros"
+image = "v1.0.1-iron"
+
+[build.dependencies]
+"@aica/foss/control-libraries" = "v7.4.1"
+"@aica/foss/modulo" = "v4.2.2"
+
+[build.packages.pd]
+source = "./src/s3c_part_detection"
