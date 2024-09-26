@@ -267,6 +267,10 @@ class PartDetector(Component):
             self._pose.set_orientation(self._pose.get_orientation() * self.quat_from_rot_vec(deltas[3:]))
             self._pose.set_name("exact_detection")
             self.send_static_transform(self._pose)
+            pose = copy.copy(self._pose)
+            pose.set_position(pose.get_position() - np.asarray([0, 0, 0.05]))
+            pose.set_name("exact_detection_down")
+            self.send_static_transform(pose)
             return {"success": True, "message": "Final pose of stage detected"}
 
     def _publish_pickup(self, payload):
