@@ -15,7 +15,7 @@ case "$1" in
   *) echo "Unsupported argument"; exit 1;;
 esac
 
-docker build -t s3c-people-detection "${ROOT_DIR}" || exit 1
+# docker build -t s3c-people-detection "${ROOT_DIR}" || exit 1
 
 if [ "$(docker ps -aq -f status=running -f name=${CONTAINER_NAME})" ]; then
   docker stop ${CONTAINER_NAME}
@@ -26,6 +26,7 @@ fi
 
 ptpcam --show-property=0x5013 --val=0x8005
 
+xhost +
 docker run -it --rm \
   --privileged \
   --net=host \

@@ -147,7 +147,7 @@ class LaserScanProcessor:
         self.full_speed = False
     
     def modulate_speed(self, factor):
-        rospy.logerr(f"Modulating speed by factor {factor}")
+        rospy.loginfo_throttle(1, f"Modulating speed by factor {factor}")
         try:
             if self.stopped:
                 self.aica.switch_controllers("robot", activate=["impedance"])
