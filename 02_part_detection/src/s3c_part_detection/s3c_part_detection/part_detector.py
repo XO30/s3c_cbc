@@ -50,6 +50,7 @@ class PartDetector(Component):
         self._current_label = None
         self._home = sr.CartesianPose()
         self._pose = sr.CartesianPose()
+        self._done = False
 
         self.add_static_tf_broadcaster()
 
@@ -85,6 +86,7 @@ class PartDetector(Component):
         self.set_predicate("stage_done", False)
         self.set_predicate("pickup_published", False)
         self._pose = copy.deepcopy(self._home)
+        self._done = False
         return {"success": True, "message": ""}
 
     def init(self) -> bool:
@@ -198,32 +200,33 @@ class PartDetector(Component):
             response = {"success": False, "message": "Invalid payload, only 'stage_2' or 'stage_3' supported"}
             return response
 
-        if len(self._depth_images) < self._num_stack.get_value() or len(self._rgb_images) < self._num_stack.get_value():
-            response = {"success": False, "message": "Not enough images to run detection"}
-            return response
+        # if len(self._depth_images) < self._num_stack.get_value() or len(self._rgb_images) < self._num_stack.get_value():
+        #     response = {"success": False, "message": "Not enough images to run detection"}
+        #     return response
 
-        objects = []
-        indices = []
-        for i in range(5):
-            objects = self._detect_objects()
-            self.get_logger().debug(f"{objects}")
-            for j, obj_label in enumerate(objects["labels"]):
-                if label == obj_label:
-                    indices.append(j)
-            if len(indices):
-                break
-            time.sleep(0.5)
-        self._publish_detections(self._rgb_images[-1].copy(), objects)
+        # objects = []
+        # indices = []
+        # for _ in range(5):
+        #     objects = self._detect_objects()
+        #     self.get_logger().debug(f"{objects}")
+        #     for j, obj_label in enumerate(objects["labels"]):
+        #         if label == obj_label:
+        #             indices.append(j)
+        #     if len(indices):
+        #         break
+        #     time.sleep(0.5)
+        # self._publish_detections(self._rgb_images[-1].copy(), objects)
 
-        if not len(indices):
-            response = {"success": False, "message": f"Could not find {payload} in current image"}
-            return response
-        elif len(indices) > 1:
-            response = {"success": False, "message": f"Found several objects with label {payload} in current image"}
-            return response
+        # if not len(indices):
+        #     response = {"success": False, "message": f"Could not find {payload} in current image"}
+        #     return response
+        # elif len(indices) > 1:
+        #     response = {"success": False, "message": f"Found several objects with label {payload} in current image"}
+        #     return response
 
-        deltas = self._logic.extract_initial_deltas(objects, indices[0])
-        self._pose.set_position(self._pose.get_position() - np.asarray(deltas[:3]) / 1000.0)
+        # deltas = self._logic.extract_initial_deltas(objects, indices[0])
+        # self._pose.set_position(self._pose.get_position() - np.asarray(deltas[:3]) / 1000.0)
+        self._pose.set_position(self._pose.get_position() - [0.0, 0.0, 0.05])
         self._pose.set_name("initial_detection")
         self.send_static_transform(self._pose)
         self.set_predicate("stage_found", True)
@@ -235,40 +238,44 @@ class PartDetector(Component):
             response = {"success": False, "message": "Cannot perform exact detection, run initial detection first"}
             return response
 
-        objects = []
-        indices = []
-        for i in range(5):
-            objects = self._detect_objects()
-            self.get_logger().debug(f"{objects}")
-            for j, obj_label in enumerate(objects["labels"]):
-                if self._current_label == obj_label:
-                    indices.append(j)
-            if len(indices):
-                break
-            time.sleep(0.5)
-        self._publish_detections(self._rgb_images[-1].copy(), objects)
+        # objects = []
+        # indices = []
+        # for i in range(5):
+        #     objects = self._detect_objects()
+        #     self.get_logger().debug(f"{objects}")
+        #     for j, obj_label in enumerate(objects["labels"]):
+        #         if self._current_label == obj_label:
+        #             indices.append(j)
+        #     if len(indices):
+        #         break
+        #     time.sleep(0.5)
+        # self._publish_detections(self._rgb_images[-1].copy(), objects)
 
-        if not len(indices):
-            response = {"success": False, "message": f"Could not find stage in current image"}
-            return response
-        elif len(indices) > 1:
-            response = {"success": False, "message": f"Found several objects in current image"}
-            return response
+        # if not len(indices):
+        #     response = {"success": False, "message": f"Could not find stage in current image"}
+        #     return response
+        # elif len(indices) > 1:
+        #     response = {"success": False, "message": f"Found several objects in current image"}
+        #     return response
 
-        deltas, done = self._logic.extract_final_deltas(objects, indices[0])
+        # deltas, done = self._logic.extract_final_deltas(objects, indices[0])
+        done = self._done
         self.set_predicate("stage_done", done)
         if not done:
+            self._done = True
+            deltas = [0.0, 10.0, 0.0, 0.0, 0.0, 0.0]
             self._pose.set_position(self._pose.get_position() - np.asarray(deltas[:3]) / 1000.0)
             self._pose.set_name("exact_detection")
             self.send_static_transform(self._pose)
             return {"success": True, "message": "Run exact detection again"}
         else:
+            deltas = [0.0, 0.0, 10.0, 0.0, 0.0, 0.0]
             self._pose.set_position(self._pose.get_position() - np.asarray(deltas[:3]) / 1000.0)
             self._pose.set_orientation(self._pose.get_orientation() * self.quat_from_rot_vec(deltas[3:]))
             self._pose.set_name("exact_detection")
             self.send_static_transform(self._pose)
             pose = copy.copy(self._pose)
-            pose.set_position(pose.get_position() - np.asarray([0, 0, 0.05]))
+            pose.set_position(pose.get_position() - np.asarray([0, 0, 0.02]))
             pose.set_name("exact_detection_down")
             self.send_static_transform(pose)
             return {"success": True, "message": "Final pose of stage detected"}

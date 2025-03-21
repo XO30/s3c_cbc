@@ -1,0 +1,73 @@
+{
+  "$schema": "https://docs.aica.tech/schemas/1-1-1/component.schema.json",
+  "name": "Part Detector",
+  "description": {
+    "brief": "Detect stages from the Porsche gearbox for the S3C CBC"
+  },
+  "registration": "s3c_part_detection::PartDetector",
+  "inherits": "modulo_components::Component",
+  "parameters": [
+    {
+      "display_name": "Number of Images",
+      "description": "Number of images to stack for averaging and reducing noice in image processing",
+      "parameter_name": "num_stack",
+      "parameter_type": "int",
+      "default_value": "5"
+    },
+    {
+      "display_name": "Configuration File",
+      "description": "The configuration file for detection parameters",
+      "parameter_name": "config_file",
+      "parameter_type": "string",
+      "default_value": null
+    },
+    {
+      "display_name": "Robot base frame",
+      "description": "The name of the robot base frame in the URDF",
+      "parameter_name": "robot_base_frame",
+      "parameter_type": "string",
+      "default_value": null
+    }
+  ],
+  "predicates": [
+    {
+      "display_name": "Stage found",
+      "description": "True if the desired stage was found",
+      "predicate_name": "stage_found"
+    },
+    {
+      "display_name": "Stage done",
+      "description": "True if the desired stage has been fully detected",
+      "predicate_name": "stage_done"
+    },
+    {
+      "display_name": "Pickup published",
+      "description": "True if the pickup frame has been published",
+      "predicate_name": "pickup_published"
+    }
+  ],
+  "services": [
+    {
+      "display_name": "Initial Detection",
+      "description": "Perform initial detection",
+      "service_name": "initial_detection",
+      "payload_format": "Either 'stage_2' or 'stage_3'"
+    },
+    {
+      "display_name": "Exact Detection",
+      "description": "Perform exact detection",
+      "service_name": "exact_detection"
+    },
+    {
+      "display_name": "Publish Pickup",
+      "description": "Publish the pickup pose",
+      "service_name": "publish_pickup",
+      "payload_format": "Float representing the height above the table"
+    },
+    {
+      "display_name": "Reset",
+      "description": "Reset detection",
+      "service_name": "reset"
+    }
+  ]
+}
